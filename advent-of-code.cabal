@@ -1,0 +1,67 @@
+cabal-version: 3.0
+name:          advent-of-code
+version:       2024
+build-type:    Simple
+
+common warnings
+  ghc-options: -Wall
+
+library advent-of-code-solutions
+  import:           warnings
+  hs-source-dirs:   src
+  build-depends:
+    , array
+    , base
+    , containers
+    , data-ordlist
+    , extra
+    , ghc
+    , hashable
+    , hashmap
+    , matrix
+    , MissingH
+    , monad-memo
+    , mtl
+    , parallel
+    , parsec
+    , split
+    , text
+    , utility-ht
+
+  exposed-modules:
+    Lib.Solution
+    Solutions.Day1
+
+  other-modules:
+    Lib.Dfs
+    Lib.Parser
+    Lib.Stack
+    Lib.TaskRunner
+    Lib.Utils
+
+  default-language: Haskell2010
+
+executable advent-of-code
+  import:           warnings
+  main-is:          Main.hs
+  hs-source-dirs:   app
+  ghc-options:      -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+    , advent-of-code-solutions
+    , base
+
+  hs-source-dirs:   app
+  default-language: Haskell2010
+
+test-suite Tests
+  type:             exitcode-stdio-1.0
+  main-is:          tests.hs
+  hs-source-dirs:   test
+  build-depends:
+    , advent-of-code-solutions
+    , base
+    , tasty
+    , tasty-hunit
+
+  other-modules:    Utils
+  default-language: Haskell2010
