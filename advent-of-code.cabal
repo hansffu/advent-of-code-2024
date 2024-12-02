@@ -20,16 +20,17 @@ library advent-of-code-solutions
     , hashmap
     , matrix
     , MissingH
+    , megaparsec
     , monad-memo
     , mtl
     , parallel
-    , parsec
     , split
     , text
     , utility-ht
 
   exposed-modules:
     Lib.Solution
+    Solutions.DayX
     Solutions.Day1
 
   other-modules:
