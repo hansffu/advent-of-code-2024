@@ -19,8 +19,8 @@ library advent-of-code-solutions
     , hashable
     , hashmap
     , matrix
-    , MissingH
     , megaparsec
+    , MissingH
     , monad-memo
     , mtl
     , parallel
@@ -30,9 +30,9 @@ library advent-of-code-solutions
 
   exposed-modules:
     Lib.Solution
-    Solutions.DayX
     Solutions.Day1
     Solutions.Day2
+    Solutions.DayX
 
   other-modules:
     Lib.Dfs
