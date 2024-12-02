@@ -1,20 +1,27 @@
 module Main where
 
 import Lib.Solution (Solution (day), solve)
-import Solutions.Day1 (day1)
 
-currentDay :: Int
-currentDay = 1
+-- import Solutions.Day1 (day1)
+import Solutions.Day2 (day2)
+
+-- currentDay :: Int
+-- currentDay = 2
 
 runAll :: Bool
 runAll = False
 
 main :: IO ()
-main = mapM_ run (filter (\s -> runAll || day s == currentDay) solutions)
- where
-  solutions =
-    [ day1
-    ]
+main = run day2
+
+-- main :: IO ()
+-- main = mapM_ run (filter (\s -> runAll || day s == currentDay) solutions)
+--  where
+--   solutions :: forall i a b. Solution i a b => [Solution i a b]
+--   solutions =
+--     [ day1
+--     , day2
+--     ]
 
 run :: (Show a, Show b) => Solution i a b -> IO ()
 run solution = do
