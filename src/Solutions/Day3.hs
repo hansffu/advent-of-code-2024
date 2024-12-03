@@ -9,25 +9,46 @@ import Lib.Solution
 import Text.Megaparsec (MonadParsec (..), anySingle, many, (<|>))
 import Text.Megaparsec.Char.Lexer (decimal)
 
-solution :: Solution [Mul] Int String
+solution :: Solution [Statement] Int Int
 solution = Solution 3 parser part1 part2
 
-part1 :: [Mul] -> IO Int
-part1 input =
-  return $ sum $ mulMul <$> input
+part1 :: [Statement] -> IO Int
+part1 = return . sum . (mulOrNull <$>)
 
-part2 :: [Mul] -> IO String
-part2 = todo
+part2 :: [Statement] -> IO Int
+part2 = return . stateRes . foldl nextStep (DoNext 0)
 
-type Mul = (Int, Int)
-mulMul :: Mul -> Int
-mulMul (a, b) = a * b
+data State = DoNext Int | SkipNext Int deriving (Show)
 
-parser :: Parser [Mul]
-parser = catMaybes <$> many (try mul <|> nothing)
+stateRes :: State -> Int
+stateRes (DoNext res) = res
+stateRes (SkipNext res) = res
+
+nextStep :: State -> Statement -> State
+nextStep state Do = DoNext $ stateRes state
+nextStep state Dont = SkipNext $ stateRes state
+nextStep (DoNext res) (Mul a b) = DoNext (res + a * b)
+nextStep (SkipNext res) _ = SkipNext res
+
+data Statement
+  = Mul Int Int
+  | Do
+  | Dont
+  deriving (Show)
+
+mulOrNull :: Statement -> Int
+mulOrNull (Mul a b) = a * b
+mulOrNull _ = 0
+
+parser :: Parser [Statement]
+parser = catMaybes <$> many (try mul <|> try do' <|> try dont <|> nothing)
  where
   mul = do
     a <- string "mul(" *> decimal <* char ','
     b <- decimal <* char ')'
-    return $ Just (a, b)
+    return $ Just $ Mul a b
+  do' = string "do()" $> Just Do
+  dont = string "don't()" $> Just Dont
   nothing = anySingle $> Nothing
+
+test = testSolution solution
