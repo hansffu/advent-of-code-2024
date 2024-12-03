@@ -2,7 +2,7 @@ module Main where
 
 import Lib.Solution (Solution (day), solve)
 
-import Solutions.Day2 (solution)
+import Solutions.Day3 (solution)
 
 main :: IO ()
 main = do
