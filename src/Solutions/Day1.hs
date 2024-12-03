@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module Solutions.Day1 (day1) where
+module Solutions.Day1 (solution) where
 
 import Data.IntMap (findWithDefault, fromListWith)
 import Data.List (sort)
@@ -9,8 +9,8 @@ import Lib.Solution (Solution (..))
 import Text.Megaparsec (many)
 import Text.Megaparsec.Char (eol, space1)
 
-day1 :: Solution [(Int, Int)] Int Int
-day1 = Solution 1 parser part1 part2
+solution :: Solution [(Int, Int)] Int Int
+solution = Solution 1 parser part1 part2
 
 part1 :: [(Int, Int)] -> IO Int
 part1 rows = return $ sum $ zipWith (\a b -> abs (a - b)) (sort $ fst <$> rows) (sort $ snd <$> rows)

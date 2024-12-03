@@ -1,14 +1,14 @@
-module Solutions.Day2 (day2) where
+module Solutions.Day2 (solution) where
 
+import Lib.ListUtils (dropIndex)
 import Lib.Parser (Parser)
 import Lib.Solution
-import Lib.Utils (dropIndex)
 import Text.Megaparsec
 import Text.Megaparsec.Char (hspace1, newline)
 import Text.Megaparsec.Char.Lexer (decimal)
 
-day2 :: Solution [[Int]] Int Int
-day2 = Solution 2 parser part1 part2
+solution :: Solution [[Int]] Int Int
+solution = Solution 2 parser part1 part2
 
 part1 :: [[Int]] -> IO Int
 part1 input = return $ length $ filter isSafe' input

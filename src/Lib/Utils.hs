@@ -1,4 +1,4 @@
-module Lib.Utils (readInt, juxt, debug, debug', prettyPrint, index2d, applyT2, Array2d, toArray2d, dropIndex) where
+module Lib.Utils (readInt, juxt, debug, debug', prettyPrint, index2d, applyT2, Array2d, toArray2d) where
 
 import Data.Array (Array, listArray)
 import Data.List.Utils (join)
@@ -28,6 +28,3 @@ toArray2d rows = listArray (0, length rows - 1) $ listArray (0, length (head row
 
 applyT2 :: (t -> a, t -> b) -> t -> (a, b)
 applyT2 (f1, f2) b = (f1 b, f2 b)
-
-dropIndex :: Int -> [a] -> [a]
-dropIndex i xs = let (a, b) = splitAt i xs in a ++ tail b

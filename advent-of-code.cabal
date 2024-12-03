@@ -36,6 +36,7 @@ library advent-of-code-solutions
 
   other-modules:
     Lib.Dfs
+    Lib.ListUtils
     Lib.Parser
     Lib.Stack
     Lib.TaskRunner

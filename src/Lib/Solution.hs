@@ -3,25 +3,25 @@ module Lib.Solution (Solution (..), Part, solve, testSolution, todo) where
 import Lib.Parser (Parser)
 import Lib.TaskRunner (InputType (..), readInput)
 
-type Part a = [String] -> IO a
+type Part i o = i -> IO o
 
-todo :: i -> IO Int
-todo = const $ return 0
+todo :: i -> IO String
+todo = const $ return "TODO"
 
-data (Show a, Show b) => Solution i a b = Solution
+data (Show o1, Show o2) => Solution i o1 o2 = Solution
   { day :: Int
   , inputParser :: Parser i
-  , part1Solution :: i -> IO a
-  , part2Solution :: i -> IO b
+  , part1Solution :: Part i o1
+  , part2Solution :: Part i o2
   }
 
-solve :: (Show a, Show b) => Solution i a b -> IO (a, b)
+solve :: (Show o1, Show o2) => Solution i o1 o2 -> IO (o1, o2)
 solve solution = run solution Input
 
-testSolution :: (Show a, Show b) => Solution i a b -> IO (a, b)
+testSolution :: (Show o1, Show o2) => Solution i o1 o2 -> IO (o1, o2)
 testSolution solution = run solution Sample
 
-run :: (Show a, Show b) => Solution i a b -> (Int -> InputType) -> IO (a, b)
+run :: (Show o1, Show o2) => Solution i o1 o2 -> (Int -> InputType) -> IO (o1, o2)
 run solution inputType = do
   let inputSpec = inputType $ day solution
   input <- readInput inputSpec $ inputParser solution
