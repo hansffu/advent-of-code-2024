@@ -50,5 +50,3 @@ parser = catMaybes <$> many (try mul <|> try do' <|> try dont <|> nothing)
   do' = string "do()" $> Just Do
   dont = string "don't()" $> Just Dont
   nothing = anySingle $> Nothing
-
-test = testSolution solution

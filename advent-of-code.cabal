@@ -33,6 +33,7 @@ library advent-of-code-solutions
     Solutions.Day1
     Solutions.Day2
     Solutions.Day3
+    Solutions.Day4
     Solutions.DayX
 
   other-modules:
