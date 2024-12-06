@@ -6,12 +6,13 @@ import Text.Megaparsec.Char (char, eol)
 
 import Data.Array (bounds, (!))
 import Data.Foldable (find)
+import Data.List.HT (lengthAtLeast, lengthAtMost)
 import Data.List.Utils (join)
-import Data.Maybe (fromMaybe)
-import Data.Set (fromList)
+import Data.Maybe (catMaybes, fromMaybe)
+import qualified Data.Set as S
 import Lib.Parser (Parser)
 import Lib.Solution
-import Lib.Utils (Array2d, index2d, toArray2d)
+import Lib.Utils (Array2d, index2d, replaceArr2D, toArray2d)
 import Text.Megaparsec (many, (<|>))
 
 type Input = [[Tile]]
@@ -20,22 +21,34 @@ type GuardPosition = (Int, Int, Direction)
 data Direction = U | R | D | L deriving (Show, Enum, Bounded, Eq)
 data Tile = Empty | Obstacle | Guard Direction deriving (Show)
 
-solution :: Solution Input String String
+solution :: Solution Input Int Int
 solution = Solution 6 parser part1 part2
 
-part1 :: Input -> IO String
-part1 input = do
-  print guard
-  let a = moveGuard arr (fst (fst guard), snd (fst guard), U)
-  print a
-  print obstacles
-  let locations = fromList $ (\(y, x, _) -> (y, x)) <$> a
-  return $ show $ length locations
+part1 :: Input -> IO Int
+part1 input =
+  return $ length $ S.fromList $ (\(y, x, _) -> (y, x)) <$> guardPath
  where
-  indexed = index2d input
   arr = toArray2d input
-  guard = fromMaybe (error "") $ find (isGuard . snd) $ join mempty indexed
-  obstacles = filter (isObstacle . snd) $ join mempty indexed
+  (guard, _) = fromMaybe (error "") $ find (isGuard . snd) $ join mempty $ index2d input
+  guardPath = shortestGuardPath arr guard
+
+part2 :: Input -> IO Int
+part2 input = do
+  let possibleMaps =
+        ( \(y, x) ->
+            let path = shortestGuardPath (replaceArr2D y x Obstacle tiles) guard
+             in if lengthAtLeast (length input * length (head input)) path then Just (y, x) else Nothing
+        )
+          <$> S.toList relevantTiles
+  return $ length $ catMaybes possibleMaps
+ where
+  tiles = toArray2d input
+  (guard, _) = fromMaybe (error "") $ find (isGuard . snd) $ join mempty $ index2d input
+  guardPath = shortestGuardPath tiles guard
+  relevantTiles = S.fromList $ filter (/= guard) $ (\(y, x, _) -> (y, x)) <$> guardPath
+
+shortestGuardPath :: Array2d Tile -> (Int, Int) -> [GuardPosition]
+shortestGuardPath arr (y, x) = moveGuard arr (y, x, U)
 
 moveGuard :: Array2d Tile -> GuardPosition -> [GuardPosition]
 moveGuard tiles (y, x, dir)
@@ -53,11 +66,6 @@ moveGuard tiles (y, x, dir)
     let (y', x') = next dir
      in x' < 0 || y' < 0 || y' > snd (bounds tiles) || x' > snd (bounds (tiles ! 0))
 
--- oob U = snd (next U) == 0
--- oob D = snd (next D) == length tiles - 1
--- oob L = fst (next L) == 0
--- oob R = fst (next R) == length (tiles ! 1) - 1
-
 isGuard :: Tile -> Bool
 isGuard (Guard _) = True
 isGuard _ = False
@@ -65,9 +73,6 @@ isGuard _ = False
 isObstacle :: Tile -> Bool
 isObstacle Obstacle = True
 isObstacle _ = False
-
-part2 :: Input -> IO String
-part2 = todo
 
 wrapSucc :: (Eq a, Enum a, Bounded a) => a -> a
 wrapSucc x
