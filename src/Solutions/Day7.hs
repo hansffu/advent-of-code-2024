@@ -3,7 +3,7 @@
 
 module Solutions.Day7 (solution) where
 
-import Text.Megaparsec.Char (char, newline, space, string)
+import Text.Megaparsec.Char (char, newline, string)
 
 import Lib.Parser (Parser)
 import Lib.Solution
@@ -12,21 +12,30 @@ import Text.Megaparsec.Char.Lexer (decimal)
 
 type Input = [(Int, [Int])]
 
-solution :: Solution Input Int String
+solution :: Solution Input Int Int
 solution = Solution 7 parser part1 part2
 
 part1 :: Input -> IO Int
-part1 input = do
-  return $ sum $ fst <$> filter check input
+part1 input = return $ sum $ fst <$> filter check input
  where
   check :: (Int, [Int]) -> Bool
-  check (expected, nums) = expected `elem` combine nums
+  check (expected, nums) = expected `elem` combine operators nums
+  operators :: [Int -> Int -> Int]
+  operators = [(+), (*)]
 
-part2 :: Input -> IO String
-part2 = todo
+part2 :: Input -> IO Int
+part2 input = return $ sum $ fst <$> filter check input
+ where
+  check :: (Int, [Int]) -> Bool
+  check (expected, nums) = expected `elem` combine operators nums
+  operators :: [Int -> Int -> Int]
+  operators = [(+), (*), pipe]
 
-combine :: [Int] -> [Int]
-combine = go . reverse
+pipe :: Int -> Int -> Int
+pipe a b = read $ show b <> show a
+
+combine :: [Int -> Int -> Int] -> [Int] -> [Int]
+combine operators = go . reverse
  where
   go :: [Int] -> [Int]
   go (x : y : xs) =
@@ -35,9 +44,6 @@ combine = go . reverse
      in ops <*> results
   go [x] = [x]
   go [] = []
-
-operators :: [Int -> Int -> Int]
-operators = [(+), (*)]
 
 parser :: Parser Input
 parser = many lineP
