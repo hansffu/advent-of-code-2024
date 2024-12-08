@@ -1,18 +1,22 @@
-module Solutions.DayX (solution) where
+module Solutions.DayX (solution, test) where
 
 import Text.Megaparsec.Char (string)
 
 import Lib.Parser (Parser)
 import Lib.Solution
 
-solution :: Solution String String String
+solution :: Solution Input String String
 solution = Solution 0 parser part1 part2
 
-part1 :: String -> IO String
+part1 :: Input -> IO String
 part1 = todo
 
-part2 :: String -> IO String
+part2 :: Input -> IO String
 part2 = todo
 
-parser :: Parser String
+type Input = String
+parser :: Parser Input
 parser = string "todo"
+
+test :: IO (String, String)
+test = testSolution solution
