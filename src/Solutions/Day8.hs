@@ -9,37 +9,30 @@ import qualified Data.Set as S
 import Lib.Parser (Parser)
 import Lib.Solution
 import Text.Megaparsec (MonadParsec (try), many, sepBy, (<|>))
+import Prelude hiding (getLine)
 
-solution :: Solution Input Int String
+solution :: Solution Input Int Int
 solution = Solution 8 parser part1 part2
 
 part1 :: Input -> IO Int
-part1 input = do
-  -- prettyPrint input
-  -- print antennas
-  -- print $ length antennasByType
-  -- print $ length antennaTypes
-  -- print $ input
-  -- print $ antennasByType
-  -- print $ length pairs
-  -- print pairs
-  -- print allAntinodes
-  -- print $ filter isInBounds allAntinodes
-  -- print $ length (head input)
-  return $ length $ S.fromList $ filter isInBounds allAntinodes
+part1 input = return $ length $ S.fromList $ filter isInBounds allAntinodes
  where
   antennas = sort $ findIndexes2d isAntenna input
-  -- antennaTypes = S.toList $ S.fromList $ fst <$> antennas
-  -- antennasByType' = (\antennaType -> (antennaType, snd <$> filter ((== antennaType) . fst) antennas)) <$> antennaTypes
-  -- antennasByType = (\antennaType -> (antennaType, snd <$> filter ((== antennaType) . fst) antennas)) <$> antennaTypes
-  -- antennasByType' = groupBy ((==) `on` fst) antennas
   antennasByType = (snd <$>) <$> groupBy ((==) `on` fst) antennas
   pairs = antennasByType >>= getPairs
   isInBounds (y, x) = x >= 0 && y >= 0 && x < length (head input) && y < length input
   allAntinodes = pairs >>= getAntinodes
 
-part2 :: Input -> IO String
-part2 = todo
+part2 :: Input -> IO Int
+part2 input = return $ length $ S.fromList $ filter isInBounds allAntinodes
+ where
+  antennas = sort $ findIndexes2d isAntenna input
+  antennasByType = (snd <$>) <$> groupBy ((==) `on` fst) antennas
+  pairs = antennasByType >>= getPairs
+  allAntinodes = pairs >>= getLine isInBounds
+  isInBounds (y, x) = x >= 0 && y >= 0 && x < length (head input) && y < length input
+
+-- allAntinodes = pairs >>= getAntinodes
 
 data Tile = Empty | Antenna Char deriving (Ord, Eq)
 instance Show Tile where
@@ -49,6 +42,13 @@ instance Show Tile where
 isAntenna :: Tile -> Bool
 isAntenna (Antenna _) = True
 isAntenna _ = False
+
+getLine :: ((Int, Int) -> Bool) -> ((Int, Int), (Int, Int)) -> [(Int, Int)]
+getLine isinBounds ((y1, x1), (y2, x2)) = takeWhile isinBounds (iterate next (y1, x1)) ++ takeWhile isinBounds (iterate prev (y1, x1))
+ where
+  next (y, x) = (y + dy, x + dx)
+  prev (y, x) = (y - dy, x - dx)
+  (dy, dx) = (y2 - y1, x2 - x1)
 
 getPairs :: [a] -> [(a, a)]
 getPairs xs =
@@ -71,7 +71,7 @@ parser = do
   emptyTile = char '.' >> return Empty
   antenna = Antenna <$> printChar
 
-test :: IO (Int, String)
+test :: IO (Int, Int)
 test = testSolution solution
 
 prettyPrint :: (Show a) => [[a]] -> IO ()
