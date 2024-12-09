@@ -8,14 +8,17 @@ import Data.List.Utils (join)
 import qualified Data.Set as S
 import Lib.Parser (Parser)
 import Lib.Solution
-import Text.Megaparsec (MonadParsec (try), many, sepBy, (<|>))
+import Lib.Utils (debug)
+import Text.Megaparsec (MonadParsec (try), many, sepBy, some, (<|>))
 import Prelude hiding (getLine)
 
 solution :: Solution Input Int Int
 solution = Solution 8 parser part1 part2
 
 part1 :: Input -> IO Int
-part1 input = return $ length $ S.fromList $ filter isInBounds allAntinodes
+part1 input = do
+  prettyPrint input
+  return $ length $ S.fromList $ filter isInBounds allAntinodes
  where
   antennas = sort $ findIndexes2d isAntenna input
   antennasByType = (snd <$>) <$> groupBy ((==) `on` fst) antennas
@@ -65,8 +68,7 @@ getAntinodes ((y1, x1), (y2, x2)) = [(y1 - dy, x1 - dx), (y2 + dy, x2 + dx)]
 type Input = [[Tile]]
 parser :: Parser Input
 parser = do
-  a <- many (try emptyTile <|> antenna) `sepBy` eol
-  return $ filter (not . null) a
+  many $ some (try emptyTile <|> antenna) <* eol
  where
   emptyTile = char '.' >> return Empty
   antenna = Antenna <$> printChar
@@ -82,3 +84,5 @@ findIndexes2d p rows = do
   (y, row) <- zip [0 ..] rows
   (x, a) <- zip [0 ..] row
   if p a then return (a, (y, x)) else []
+
+t = groupBy ((==) `on` fst) [('a', 1), ('b', 2), ('a', 3)]
