@@ -1,4 +1,16 @@
-module Lib.Utils (readInt, juxt, debug, debug', prettyPrint, index2d, applyT2, Array2d, toArray2d, replaceArr2D) where
+module Lib.Utils (
+  readInt,
+  juxt,
+  debug,
+  debug',
+  prettyPrint,
+  index2d,
+  applyT2,
+  Array2d,
+  toArray2d,
+  replaceArr2D,
+  findIndexes2d,
+) where
 
 import Data.Array (Array, listArray, (!), (//))
 import Data.List.Utils (join)
@@ -32,6 +44,12 @@ replaceArr2D row col newVal arr2d =
  where
   currentRow = arr2d ! row
   newRow = currentRow // [(col, newVal)]
+
+findIndexes2d :: (a -> Bool) -> [[a]] -> [(a, (Int, Int))]
+findIndexes2d p rows = do
+  (y, row) <- zip [0 ..] rows
+  (x, a) <- zip [0 ..] row
+  if p a then return (a, (y, x)) else []
 
 applyT2 :: (t -> a, t -> b) -> t -> (a, b)
 applyT2 (f1, f2) b = (f1 b, f2 b)
