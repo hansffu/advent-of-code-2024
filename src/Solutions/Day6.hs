@@ -1,18 +1,19 @@
 {-# LANGUAGE DataKinds #-}
 
-module Solutions.Day6 (solution) where
+module Solutions.Day6 (solution, test) where
 
 import Text.Megaparsec.Char (char, eol)
 
 import Data.Array (bounds, (!))
 import Data.Foldable (find)
-import Data.List.HT (lengthAtLeast, lengthAtMost)
+import Data.List.HT (lengthAtLeast)
 import Data.List.Utils (join)
 import Data.Maybe (catMaybes, fromMaybe)
 import qualified Data.Set as S
+import Lib.Array2d (Array2d, replaceArr2D, toArray2d)
 import Lib.Parser (Parser)
 import Lib.Solution
-import Lib.Utils (Array2d, index2d, replaceArr2D, toArray2d)
+import Lib.Utils (index2d)
 import Text.Megaparsec (many, (<|>))
 
 type Input = [[Tile]]
@@ -92,4 +93,5 @@ parser = many lineP
 
 -- emp = char '.' >> return (const Empty)
 
+test :: IO (Int, Int)
 test = testSolution solution

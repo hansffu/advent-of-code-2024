@@ -8,8 +8,7 @@ import Data.List.Utils (join)
 import qualified Data.Set as S
 import Lib.Parser (Parser)
 import Lib.Solution
-import Lib.Utils (debug)
-import Text.Megaparsec (MonadParsec (try), many, sepBy, some, (<|>))
+import Text.Megaparsec (MonadParsec (try), many, some, (<|>))
 import Prelude hiding (getLine)
 
 solution :: Solution Input Int Int
@@ -84,5 +83,3 @@ findIndexes2d p rows = do
   (y, row) <- zip [0 ..] rows
   (x, a) <- zip [0 ..] row
   if p a then return (a, (y, x)) else []
-
-t = groupBy ((==) `on` fst) [('a', 1), ('b', 2), ('a', 3)]

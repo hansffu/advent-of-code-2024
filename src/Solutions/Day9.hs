@@ -5,11 +5,8 @@ import Text.Megaparsec.Char (digitChar)
 import Data.Char (digitToInt)
 import Data.List (group)
 import Data.List.Extra (chunksOf)
-import Data.List.HT (takeUntil)
-import Debug.Trace (traceShow)
 import Lib.Parser (Parser)
 import Lib.Solution
-import Lib.Utils (debug)
 import System.Directory.Extra ()
 import Text.Megaparsec (many)
 
@@ -72,7 +69,7 @@ moveFiles2 blocks = go (reverse $ group blocks) blocks
   go ((Space : _) : bs) disk = go bs disk
   go (bs@((FilePart _) : _) : nextBs) disk = go nextBs $ moveFile bs disk
   go [] disk = disk
-  go a disk = error $ show a
+  go a _ = error $ show a
 
 moveFile :: [Block] -> [Block] -> [Block]
 moveFile file disk

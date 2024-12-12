@@ -45,6 +45,7 @@ library advent-of-code-solutions
     Solutions.DayX
 
   other-modules:
+    Lib.Array2d
     Lib.Dfs
     Lib.ListUtils
     Lib.Parser
