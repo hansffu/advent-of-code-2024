@@ -3,26 +3,28 @@ module Solutions.Day13 (solution, test) where
 import Text.Megaparsec.Char (eol, newline, string)
 
 import Data.Maybe (mapMaybe)
+import Data.Tuple.Extra (both)
 import Lib.Parser (Parser)
 import Lib.Solution hiding (solve)
 import Text.Megaparsec (many, sepBy, try, (<|>))
 import Text.Megaparsec.Char.Lexer (decimal)
 
-solution :: Solution Input Int String
+solution :: Solution Input Int Int
 solution = Solution 13 parser part1 part2
 
 part1 :: Input -> IO Int
-part1 input = do
-  print input
-  print winCombinations
-  return $ sum $ costToWin <$> filter lessThan101 winCombinations
+part1 input = return $ sum $ costToWin <$> filter lessThan101 winCombinations
  where
   winCombinations = mapMaybe (uncurry solve) input
   lessThan101 (a, b) = a <= 100 && b <= 100
   costToWin (a, b) = 3 * a + b
 
-part2 :: Input -> IO String
-part2 = todo
+part2 :: Input -> IO Int
+part2 input = return $ sum $ costToWin <$> winCombinations
+ where
+  winCombinations = mapMaybe (uncurry solve . both adjustPrize) input
+  adjustPrize (a, b, c) = (a, b, c + 10000000000000)
+  costToWin (a, b) = 3 * a + b
 
 type Input = [(Equation, Equation)]
 parser :: Parser Input
@@ -45,7 +47,7 @@ parser = groupP `sepBy` many newline
     y <- decimal
     return (x, y)
 
-test :: IO (Int, String)
+test :: IO (Int, Int)
 test = testSolution solution
 
 type Equation = (Double, Double, Double)
