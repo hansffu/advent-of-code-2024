@@ -2,13 +2,19 @@ module Solutions.Day14 (solution, test) where
 
 import Text.Megaparsec.Char (char, eol, string)
 
+import Control.Monad (when)
+import Data.List (isInfixOf)
+import Data.Matrix (Matrix, matrix, setElem, toLists)
 import Lib.Parser (Parser)
 import Lib.Solution
+import Lib.Utils (prettyPrint)
 import Text.Megaparsec (many, optional)
 import Text.Megaparsec.Char.Lexer (decimal)
 
 solution :: Solution Input Int String
-solution = Solution 14 parser (part1 (101, 103)) part2
+solution = Solution 14 parser (part1 bounds) (part2 bounds)
+ where
+  bounds = (101, 103)
 
 type RobotSpec = ((Int, Int), (Int, Int))
 type Bounds = (Int, Int)
@@ -22,8 +28,30 @@ part1 bounds input = do
   finalPositions = posAfter bounds 100 <$> input
   qs = groupByQuadrant bounds finalPositions
 
-part2 :: Input -> IO String
-part2 = todo
+part2 :: Bounds -> Input -> IO String
+part2 bounds input = do
+  mapM_ printImage imagesIndexed
+  putStrLn "done"
+  todo input
+ where
+  positionAfter n = posAfter bounds n <$> input
+  iterations = uncurry (*) bounds
+  images = toImage bounds . positionAfter <$> [0 .. iterations]
+  imagesIndexed = zip [0 ..] images
+
+toImage :: Bounds -> [Position] -> Matrix Char
+toImage (bx, by) = foldr printBot empty
+ where
+  empty = matrix by bx (const '.')
+  printBot (x, y) = setElem '#' (y + 1, x + 1)
+
+printImage :: (Int, Matrix Char) -> IO ()
+printImage (i, m) = do
+  let lists = toLists m
+  -- hopefully the branches are this wide xD
+  when (any (isInfixOf "########") lists) $ do
+    putStrLn $ "After " <> show i
+    prettyPrint $ toLists m
 
 type Quadrant = ([Position], [Position], [Position], [Position])
 groupByQuadrant :: Bounds -> [Position] -> [[Position]]
@@ -62,6 +90,6 @@ parser = many lineP
       Nothing -> n
 
 test :: IO (Int, String)
-test = testSolution $ Solution 14 parser (part1 bounds) part2
+test = testSolution $ Solution 14 parser (part1 bounds) (part2 bounds)
  where
   bounds = (11, 7)
