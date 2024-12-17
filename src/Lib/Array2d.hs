@@ -4,6 +4,8 @@ module Lib.Array2d (
   Array2d,
   replaceArr2D,
   Node,
+  safe2dLookup,
+  findIndexes2d,
 ) where
 
 import Data.Array (Array, listArray, (!), (//))
@@ -38,3 +40,9 @@ safe2dLookup arr (y, x) = do
   row <- arr !? y
   item <- row !? x
   return (item, (y, x))
+
+findIndexes2d :: (a -> Bool) -> [[a]] -> [(a, (Int, Int))]
+findIndexes2d p rows = do
+  (y, row) <- zip [0 ..] rows
+  (x, a) <- zip [0 ..] row
+  if p a then return (a, (y, x)) else []

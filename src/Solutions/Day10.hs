@@ -7,11 +7,10 @@ import Data.Char (digitToInt)
 import Data.List (nub)
 import Data.List.Extra (groupOn)
 import Data.Maybe (catMaybes)
-import Lib.Array2d (Array2d, toArray2d)
+import Lib.Array2d (Array2d, findIndexes2d, toArray2d)
 import Lib.Dfs (dfs)
 import Lib.Parser (Parser)
 import Lib.Solution
-import Lib.Utils (findIndexes2d)
 import Text.Megaparsec (many, some)
 
 solution :: Solution Input Int Int

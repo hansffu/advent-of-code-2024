@@ -6,7 +6,8 @@ module Lib.Utils (
   prettyPrint,
   index2d,
   applyT2,
-  findIndexes2d,
+  wrapSucc,
+  wrapPred,
 ) where
 
 import Data.List.Utils (join)
@@ -30,11 +31,15 @@ prettyPrint = putStrLn . join "\n" . map show
 index2d :: [[a]] -> [[((Int, Int), a)]]
 index2d = zipWith (\i -> zipWith (\j x -> ((i, j), x)) [0 ..]) [0 ..]
 
-findIndexes2d :: (a -> Bool) -> [[a]] -> [(a, (Int, Int))]
-findIndexes2d p rows = do
-  (y, row) <- zip [0 ..] rows
-  (x, a) <- zip [0 ..] row
-  if p a then return (a, (y, x)) else []
-
 applyT2 :: (t -> a, t -> b) -> t -> (a, b)
 applyT2 (f1, f2) b = (f1 b, f2 b)
+
+wrapSucc :: (Eq a, Enum a, Bounded a) => a -> a
+wrapSucc x
+  | x == maxBound = minBound
+  | otherwise = succ x
+
+wrapPred :: (Eq a, Enum a, Bounded a) => a -> a
+wrapPred x
+  | x == minBound = maxBound
+  | otherwise = pred x
