@@ -4,6 +4,7 @@ module Lib.Utils (
   debug,
   debug',
   prettyPrint,
+  prettyPrintS,
   index2d,
   applyT2,
   wrapSucc,
@@ -27,6 +28,9 @@ debug' label x = traceShow (label <> ": " <> show x) x
 
 prettyPrint :: (Show a) => [a] -> IO ()
 prettyPrint = putStrLn . join "\n" . map show
+
+prettyPrintS :: (Show a) => [[a]] -> IO ()
+prettyPrintS = putStrLn . join "\n" . map (mconcat . (show <$>))
 
 index2d :: [[a]] -> [[((Int, Int), a)]]
 index2d = zipWith (\i -> zipWith (\j x -> ((i, j), x)) [0 ..]) [0 ..]

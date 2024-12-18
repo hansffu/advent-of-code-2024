@@ -25,7 +25,7 @@ replaceArr2D row col newVal arr2d =
   currentRow = arr2d ! row
   newRow = currentRow // [(col, newVal)]
 
-getNeighbours :: (Char -> Char -> Bool) -> Array2d Char -> Node Char -> [Node Char]
+getNeighbours :: (a -> a -> Bool) -> Array2d a -> Node a -> [Node a]
 getNeighbours predicate arr (item, (y, x)) =
   filter (predicate item . fst) $
     catMaybes
