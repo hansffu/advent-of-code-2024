@@ -47,6 +47,7 @@ library advent-of-code-solutions
     Solutions.Day16
     Solutions.Day17
     Solutions.Day18
+    Solutions.Day22
     Solutions.DayX
 
   other-modules:
