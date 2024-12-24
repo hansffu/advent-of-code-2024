@@ -33,10 +33,8 @@ findCycle3 m t = nub $ sort <$> findCycle'
       else []
 
 part2 :: Input -> IO String
--- part2 input = return $ intercalate "," $ S.toList $ maximumOn S.size $ findLargestCluster m <$> keys
 part2 input = do
-  let (a, b, c) = foldr findLargest (0, S.empty, S.empty) keys
-  -- print $ snd a
+  let (_, _, c) = foldr findLargest (0, S.empty, S.empty) keys
   return $ intercalate "," $ S.toList $ c
  where
   m = toMap input
@@ -65,9 +63,6 @@ findLargestCluster m ignore from = findCluster (S.difference (S.fromList (from :
     connectedToAndSelf = S.intersection potentialCluster $ S.fromList $ cur : (m ! cur)
     nextCluster = S.intersection potentialCluster connectedToAndSelf
     toCheck = S.toList $ S.filter (`notElem` currentChain) connectedTo
-
--- b = S.fromList . (\x -> x : (m ! x)) <$> a
--- c = foldr S.intersection (S.fromList (from : a)) (debug b)
 
 toMap :: [(String, String)] -> M.Map String [String]
 toMap xs = M.fromListWith (++) (xs >>= (\(a, b) -> [(a, [b]), (b, [a])]))
