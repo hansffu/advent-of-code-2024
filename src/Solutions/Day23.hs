@@ -2,10 +2,11 @@ module Solutions.Day23 (solution, test) where
 
 import Text.Megaparsec.Char (alphaNumChar, char, eol)
 
-import Data.List (intercalate, isPrefixOf, nub, sort)
+import Data.List (intercalate, isPrefixOf, nub, sort, sortOn)
 import Data.List.Extra (maximumOn)
 import Data.Map ((!))
 import qualified Data.Map as M
+import Data.Ord
 import qualified Data.Set as S
 import Lib.Parser (Parser)
 import Lib.Solution
@@ -32,19 +33,31 @@ findCycle3 m t = nub $ sort <$> findCycle'
       else []
 
 part2 :: Input -> IO String
-part2 input = return $ intercalate "," $ S.toList $ maximumOn S.size $ findLargestCluster m <$> keys
+-- part2 input = return $ intercalate "," $ S.toList $ maximumOn S.size $ findLargestCluster m <$> keys
+part2 input = do
+  let (a, b, c) = foldr findLargest (0, S.empty, S.empty) keys
+  -- print $ snd a
+  return $ intercalate "," $ S.toList $ c
  where
   m = toMap input
-  keys = M.keys m
+  keys = sortOn (Down . length) (M.keys m)
+  findLargest :: String -> (Int, S.Set String, S.Set String) -> (Int, S.Set String, S.Set String)
+  findLargest key acc@(s, ignore, _) =
+    let c = findLargestCluster m ignore key
+        ignore' = S.insert key ignore
+     in if length (m ! key) > s && S.size c > s
+          then (S.size c, ignore', c)
+          else acc
 
-findLargestCluster :: M.Map String [String] -> String -> S.Set String
-findLargestCluster m from = findCluster (S.fromList (from : a)) [] from
+findLargestCluster :: M.Map String [String] -> S.Set String -> String -> S.Set String
+findLargestCluster m ignore from = findCluster (S.difference (S.fromList (from : a)) ignore) [] from
  where
   a = m ! from
   findCluster :: S.Set String -> [String] -> String -> S.Set String
   findCluster potentialCluster currentChain cur
     | cur `elem` currentChain = S.fromList currentChain
     | not (S.member cur potentialCluster) = S.empty
+    | S.member cur ignore = S.empty
     | null toCheck = S.insert cur $ S.fromList currentChain
     | otherwise = maximumOn S.size (findCluster nextCluster (cur : currentChain) <$> toCheck)
    where
